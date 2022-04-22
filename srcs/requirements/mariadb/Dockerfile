@@ -1,4 +1,4 @@
-FROM alpine:3.14
+FROM debian:buster
 
 # Env vars
 ARG	MYSQL_DATABASE
@@ -6,15 +6,12 @@ ARG	MYSQL_USER
 ARG	MYSQL_ROOT_PASSWORD
 ARG	MYSQL_PASSWORD
 
-RUN apk update && apk upgrade && \
-	apk add \
-	mariadb \
-	mariadb-client \
-	openrc
+RUN apt-get update && apt-get install -y \
+	mariadb-server 
 
-RUN apt-get install -y mariadb-server mariadb-client
+COPY	tools/ /tools/
 
-CMD service mysql start
+RUN		service mysql start && mysql -u root < tools/init_wordpress.sql
 
 EXPOSE 3306
 	
