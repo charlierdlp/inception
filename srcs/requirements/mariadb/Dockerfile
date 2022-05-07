@@ -21,4 +21,3 @@ USER	mysql
 CMD ["mysqld", "--user=cruiz-de"]
 
 EXPOSE 3306
-		#mysql -e "GRANT ALL ON *.* TO 'root'@'%' WITH GRANT OPTION;" && \
