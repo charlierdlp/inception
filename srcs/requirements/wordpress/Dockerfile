@@ -12,3 +12,5 @@ RUN	wget https://wordpress.org/latest.tar.gz && \
 	rm -rf latest.tar.gz 
 
 COPY ./conf/wp-config.php /var/www/html/wordpress/
+
+CMD ["php-fpm7.4"]

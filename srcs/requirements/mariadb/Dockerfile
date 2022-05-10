@@ -19,5 +19,3 @@ RUN		service mysql start && mysql -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DATAB
 USER	mysql
 
 CMD ["mysqld", "--user=cruiz-de"]
-
-EXPOSE 3306

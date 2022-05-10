@@ -5,7 +5,6 @@ services:
   mariadb:
     container_name: "mariadb"
     restart: always
-
     build:
       context: ./requirements/mariadb/
       dockerfile: Dockerfile
@@ -15,7 +14,11 @@ services:
         MYSQL_USER: $MYSQL_USER
         MYSQL_PASSWORD: $MYSQL_PASSWORD
     volumes:
-      - mdbvol:/var/lib/mysql
+      - mariadbvol:/var/lib/mysql
+    expose:
+      - "3306"
+    networks:
+      - nolan
 
   wordpress:
     container_name: "wordpress"
@@ -25,6 +28,17 @@ services:
        dockerfile: Dockerfile
     depends_on:
       - mariadb
+      env:
+        MYSQL_DATABASE: $MYSQL_DATABASE
+        MYSQL_HOST: $MYSQL_HOST
+        MYSQL_USER: $MYSQL_USER
+        MYSQL_PASSWORD: $MYSQL_PASSWORD
+    volumes:
+      - wordpressvol:/var/www/html/wordpress
+    expose:
+      - "9000"
+    networks:
+      - nolan
   
   nginx:
     container_name: "nginx"
@@ -32,3 +46,12 @@ services:
     build:
       context: ./requirements/nginx/
       dockerfile: Dockerfile
+    depends_on:
+      - mariadb
+    ports:
+      - "443"
+    networks:
+      - nolan
+
+networks:
+  nolan:
