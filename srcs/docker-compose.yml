@@ -4,7 +4,7 @@ services:
 
   mariadb:
     container_name: "mariadb"
-    restart: always
+    #restart: always
     build:
       context: ./requirements/mariadb/
       dockerfile: Dockerfile
@@ -14,7 +14,10 @@ services:
         MYSQL_USER: $MYSQL_USER
         MYSQL_PASSWORD: $MYSQL_PASSWORD
     volumes:
-      - mariadbvol:/var/lib/mysql
+      #- mariadbvol:/var/lib/mysql
+      - type: bind
+        source: /home/cruiz-de/data/db
+        target: /var/lib/mysql
     expose:
       - "3306"
     networks:
@@ -24,17 +27,21 @@ services:
     container_name: "wordpress"
     restart: always
     build:
-       context: ./requirements/wordpress/
-       dockerfile: Dockerfile
-    depends_on:
-      - mariadb
-      env:
+      context: ./requirements/wordpress/
+      dockerfile: Dockerfile
+      args:
         MYSQL_DATABASE: $MYSQL_DATABASE
         MYSQL_HOST: $MYSQL_HOST
         MYSQL_USER: $MYSQL_USER
         MYSQL_PASSWORD: $MYSQL_PASSWORD
     volumes:
-      - wordpressvol:/var/www/html/wordpress
+      #- wordpressvol:/var/www/html/wordpress
+      - type: bind
+        source: /home/cruiz-de/data/wp
+        target: /var/www/html/wordpress
+    depends_on:
+      - mariadb
+      - nginx
     expose:
       - "9000"
     networks:
@@ -46,12 +53,21 @@ services:
     build:
       context: ./requirements/nginx/
       dockerfile: Dockerfile
+    volumes:
+      #- wordpressvol:/var/www/html/wordpress
+      - type: bind
+        source: /home/cruiz-de/data/wp
+        target: /var/www/html/wordpress
     depends_on:
       - mariadb
     ports:
-      - "443"
+      - "443:443"
     networks:
       - nolan
+
+volumes:
+  mariadbvol:
+  wordpressvol:
 
 networks:
   nolan:

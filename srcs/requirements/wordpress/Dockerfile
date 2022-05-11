@@ -1,16 +1,18 @@
 FROM debian:buster
 
-RUN apt-get update && apt-get install -y \
-	php7.4-bcmath php7.4-curl php7.4-gd php7.4-imagick php7.4-intl php7.4-mbstring php7.4-xml php7.4-zip \
+RUN apt-get update && apt-get upgrade && apt-get install -y \
+	php-fpm php-mbstring php-zip php-gd php-xml-util php-mysql php-curl php-bcmath php-gettext php-net-socket php-cgi php-common php-pear \
 	wget
 
+RUN mkdir /run/php
+RUN sed -i 's+/run/php/php7.3-fpm.sock+0.0.0.0:9000+' /etc/php/7.3/fpm/pool.d/www.conf
+
 RUN	wget https://wordpress.org/latest.tar.gz && \
-	tar -xvzf latest.tar.gz && \
-	mv wordpress /var/www/html/wordpress && \
+	mkdir -p /var/www/html && \
+	tar -xvzf latest.tar.gz -C /var/www/html && \
 	chown -R www-data:www-data /var/www/html/wordpress && \
-	rm -rf wordpress && \
 	rm -rf latest.tar.gz 
 
 COPY ./conf/wp-config.php /var/www/html/wordpress/
 
-CMD ["php-fpm7.4"]
+ENTRYPOINT ["php-fpm7.3", "-F"]
