@@ -8,8 +8,6 @@ ARG	MYSQL_PASSWORD
 RUN apt-get update && apt-get upgrade && apt-get install -y \
 	mariadb-server 
 
-RUN	mkdir -p /var/lib/mysql && chown -R mysql:mysql /var/lib/mysql
-
 RUN	service mysql start && mysql -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;" && \
 	mysql -e "CREATE USER IF NOT EXISTS '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';" && \
 	mysql -e "GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%';" && \
@@ -17,4 +15,4 @@ RUN	service mysql start && mysql -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABA
 
 USER mysql
 
-CMD ["mysqld"]
+ENTRYPOINT ["mysqld", "--bind-address=0.0.0.0"]
