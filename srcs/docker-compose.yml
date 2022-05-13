@@ -4,7 +4,8 @@ services:
   mariadb:
     env_file:
      - .env
-    container_name: "mariadb"
+    container_name: mariadb
+    image: mariadb
     restart: always
     build:
       context: ./requirements/mariadb/
@@ -15,14 +16,15 @@ services:
         MYSQL_USER: $MYSQL_USER
         MYSQL_PASSWORD: $MYSQL_PASSWORD
     volumes:
-      - database:/var/lib/mysql
+      - db_volume:/var/lib/mysql
     networks:
       - nolan
 
   wordpress:
     env_file:
       - .env
-    container_name: "wordpress"
+    container_name: wordpress
+    image: wordpress
     restart: always
     build:
       context: ./requirements/wordpress/
@@ -33,20 +35,21 @@ services:
         MYSQL_USER: $MYSQL_USER
         MYSQL_PASSWORD: $MYSQL_PASSWORD
     volumes:
-      - wordpressvol:/var/www/html/wordpress
+      - wp_volume:/var/www/html/wordpress
     depends_on:
       - mariadb
     networks:
       - nolan
   
   nginx:
-    container_name: "nginx"
+    container_name: nginx
+    image: nginx
     restart: always
     build:
       context: ./requirements/nginx/
       dockerfile: Dockerfile
     volumes:
-      - wordpressvol:/var/www/html/wordpress/
+      - wp_volume:/var/www/html/wordpress/
     depends_on:
       - wordpress
     ports:
@@ -55,12 +58,12 @@ services:
       - nolan
 
 volumes:
-  database:
+  db_volume:
     driver_opts:
       o: bind
       type: none
       device: /home/cruiz-de/data/database
-  wordpressvol: 
+  wp_volume: 
     driver_opts:
       o: bind
       type: none
@@ -68,3 +71,4 @@ volumes:
 
 networks:
   nolan:
+    name: nolan
