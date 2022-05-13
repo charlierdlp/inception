@@ -16,10 +16,6 @@ services:
         MYSQL_PASSWORD: $MYSQL_PASSWORD
     volumes:
       - database:/var/lib/mysql
-      #- /home/cruiz-de/data/db/:/var/lib/mysql
-      #- type: bind
-      #  source: /home/cruiz-de/data/db
-      #  target: /var/lib/mysql
     networks:
       - nolan
 
@@ -38,9 +34,6 @@ services:
         MYSQL_PASSWORD: $MYSQL_PASSWORD
     volumes:
       - wordpressvol:/var/www/html/wordpress
-      #- type: bind
-      #  source: /home/cruiz-de/data/wp
-      #  target: /var/www/html/wordpress
     depends_on:
       - mariadb
     networks:
@@ -54,9 +47,6 @@ services:
       dockerfile: Dockerfile
     volumes:
       - wordpressvol:/var/www/html/wordpress/
-      #- type: bind
-      #  source: /home/cruiz-de/data/wp
-      #  target: /var/www/html/wordpress
     depends_on:
       - wordpress
     ports:
